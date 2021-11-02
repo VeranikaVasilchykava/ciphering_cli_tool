@@ -1,0 +1,29 @@
+{
+  "name": "ciphering_cli_tool",
+  "version": "1.0.0",
+  "description": "CLI tool that will encode and decode a text by 3 substitution ciphers",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/VeronikaVasilchikova/ciphering_cli_tool.git"
+  },
+  "keywords": [
+    "node",
+    "cli",
+    "stream",
+    "ciphering"
+  ],
+  "author": "Veronika Vasilchikova <v.vasilchykava@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/VeronikaVasilchikova/ciphering_cli_tool/issues"
+  },
+  "homepage": "https://github.com/VeronikaVasilchikova/ciphering_cli_tool#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.14"
+  }
+}
