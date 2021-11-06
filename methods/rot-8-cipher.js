@@ -1,7 +1,7 @@
-const helperCoding = require('./helper');
+const {helperToCipher} = require('../helpers');
 
 const rot8CipherCoding = (char) => {
-  const { charCode, zCode } = helperCoding(char);
+  const { charCode, zCode } = helperToCipher(char);
   const shiftedCharCode = ((charCode + 8) <= zCode) ?
     (charCode + 8) :
     ((charCode + 8) - 26);
@@ -10,7 +10,7 @@ const rot8CipherCoding = (char) => {
 };
 
 const rot8CipherDecoding = (char) => {
-  const { charCode, aCode } = helperCoding(char);
+  const { charCode, aCode } = helperToCipher(char);
   const shiftedCharCode = ((charCode - 8) >= aCode) ?
     (charCode - 8) :
     ((charCode - 8) + 26);

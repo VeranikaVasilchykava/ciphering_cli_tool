@@ -1,4 +1,4 @@
-const ALPHABET = require('./constants');
+const {ALPHABET} = require('../constants');
 
 const atbashCipherCoding = (char) => {
   if (char === char.toLowerCase()) {

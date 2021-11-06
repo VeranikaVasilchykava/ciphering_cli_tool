@@ -1,7 +1,7 @@
-const helperCoding = require('./helper');
+const {helperToCipher} = require('../helpers');
 
 const caesarCipherCoding = (char) => {
-  const { charCode, aCode, zCode } = helperCoding(char);
+  const { charCode, aCode, zCode } = helperToCipher(char);
   const shiftedCharCode = ((charCode + 1) <= zCode) ?
     (charCode + 1) :
     ((charCode + 1) % zCode + (aCode - 1));
@@ -10,7 +10,7 @@ const caesarCipherCoding = (char) => {
 };
 
 const caesarCipherDecoding = (char) => {
-  const { charCode, aCode, zCode } = helperCoding(char);
+  const { charCode, aCode, zCode } = helperToCipher(char);
   const shiftedCharCode = ((charCode - 1) <= zCode) ?
     (charCode - 1) :
     ((charCode - 1) % zCode + (aCode + 1));
