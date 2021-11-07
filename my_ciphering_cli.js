@@ -6,12 +6,6 @@ const CipherTransphorm = require('./stream/cipherTransphorm');
 const customStdin = require('./stream/customStdin');
 const {ERROR_MESSAGE} = require('./constants');
 
-const handleError = (stream, errorMessage) => {
-  stream.destroy();
-  stderr.write(errorMessage);
-  exit(1);
-};
-
 try {
   const initialArgs = process.argv.slice(2);
   const {config, input, output} = argsParser(initialArgs);
@@ -35,7 +29,6 @@ try {
 
   readableStream
     .on('error', handleReadError)
-    // .on('error', handleError(readableStream, ERROR_MESSAGE.INPUT))
     .pipe(transformStream)
     .pipe(writableStream)
     .on('error', handleWriteError);
