@@ -10,7 +10,7 @@ The tool is a part of the Node.js Course by RS School and here is [the task desc
 
 - in your terminal navigate to the root directory
 
-- you are ready to use CLI, see usage examples below
+- now you are ready to use CLI, see usage examples below
 
 
 **Usage example:**
