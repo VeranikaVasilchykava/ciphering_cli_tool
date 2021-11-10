@@ -7,15 +7,12 @@ class Rot8CipherTransphormStream extends Transform {
     this.cipher = cipher;
   }
   _transform(chunk, encode, done) {
-    switch(this.cipher) {
-      case 'R0':
-        transformedChunk = this._rot8CipherTransphorm(transformedChunk, 0);
-        break;
-      case 'R1':
-        transformedChunk = this._rot8CipherTransphorm(transformedChunk, 1);
-        break;
-      default:
-        break;
+    let transformedChunk = '';
+    if (this.cipher) {
+      transformedChunk = this._rot8CipherTransphorm(chunk.toString(), 1);
+    }
+    else {
+      transformedChunk = this._rot8CipherTransphorm(chunk.toString(), 0);
     }
     this.push(transformedChunk);
     done();

@@ -1,11 +1,12 @@
 const { stdout, stderr, exit } = process;
 const { pipeline } = require('stream');
 const { validateConfig, validateOptions } = require('./helpers/validator');
-const { argsParser, convertStringToStreamsArray } = require('./helpers/parser');
+const { argsParser } = require('./helpers/parser');
+const convertStringToStreamsArray = require('./helpers/converter');
 const { CustomWritableStream,
         CustomReadableStream,
         customStdin } = require('./stream');
-const ValidationError = require('./custom-error');
+const { ValidationError } = require('./custom-error');
 const { ERROR_MESSAGE } = require('./constants');
 
 try {
@@ -25,15 +26,15 @@ try {
     writableStream,
     (err) => {
       if (err) {
-        throw new ValidationError(err.message, ERROR_MESSAGE.PIPELINE.NAME);
+        throw new ValidationError(`${ERROR_MESSAGE.PIPELINE.NAME}: -> ${err.message}`);
       }
     }
   )
 }
 catch(error) {
   if (error instanceof ValidationError) {
-    const { name, message } = error;
-    stderr.write(`${name} -> ${message}`);
+    const { message } = error;
+    stderr.write(message);
     exit(1);
   }
   else {

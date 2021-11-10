@@ -1,7 +1,5 @@
 const fs = require('fs');
 const { Writable } = require('stream');
-const { ERROR_MESSAGE } = require('../constants');
-const ValidationError = require('../custom-error');
 
 class CustomWritableStream extends Writable {
   constructor(output) {
@@ -10,12 +8,14 @@ class CustomWritableStream extends Writable {
   }
   _write(chunk, encoding, callback) {
     if (!fs.existsSync(this.output)) {
-      throw new ValidationError(ERROR_MESSAGE.OUTPUT.MESSAGE, ERROR_MESSAGE.OUTPUT.NAME);
+      process.stderr.write(`There is no acces to ${this.output}`);
+      process.exit(1);
     }
 
     fs.appendFile(this.output, chunk.toString(), (error) => {
       if (error) {
-        throw new ValidationError(ERROR_MESSAGE.OUTPUT.MESSAGE, ERROR_MESSAGE.OUTPUT.NAME);
+        process.stderr.write(error.message);
+        prosecc.exit(1);
       }
     });
 

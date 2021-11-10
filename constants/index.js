@@ -16,18 +16,6 @@ const ERROR_MESSAGE = {
     NAME: 'WRONG CONFIG',
     MESSAGE: 'You input the wrong config. Please check usage examples in read.me and try again.'
   },
-  OPTIONS: {
-    NAME: 'WRONG OPTIONS',
-    MESSAGE: 'You are using the wrong options. Please check usage examples in read.me and try again.'
-  },
-  INPUT: {
-    NAME: 'WRONG INPUT',
-    MESSAGE: 'Unable to access the input file'
-  },
-  OUTPUT: {
-    NAME: 'WRONG OUTPUT',
-    MESSAGE: 'Unable to access the output file'
-  },
   PIPELINE: {
     NAME: 'PIPELINE ERROR'
   }
