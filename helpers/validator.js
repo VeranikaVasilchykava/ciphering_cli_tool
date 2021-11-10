@@ -1,4 +1,5 @@
-const {ERROR_MESSAGE} = require('../constants');
+const { ERROR_MESSAGE } = require('../constants');
+const ValidationError = require('../custom-error');
 
 /**
  * Check if the config is valid
@@ -8,26 +9,30 @@ const {ERROR_MESSAGE} = require('../constants');
  * @returns {void}
  */
 const validateConfig = (str) => {
-  if (!str) throw Error(ERROR_MESSAGE.EMPTY_CONFIG);
+  if (!str) {
+    throw new ValidationError(ERROR_MESSAGE.EMPTY_CONFIG.MESSAGE, ERROR_MESSAGE.EMPTY_CONFIG.NAME);
+  }
   if (str.length === 1 && str !== 'A') {
-    throw Error(ERROR_MESSAGE.CONFIG);
+    throw new ValidationError(ERROR_MESSAGE.CONFIG.MESSAGE, ERROR_MESSAGE.CONFIG.NAME);
   }
   if (str.length === 2) {
     const validStr = (str === 'C0' ||
       str === 'C1' ||
       str === 'R0' ||
       str === 'R1');
-    if (!validStr) throw Error(ERROR_MESSAGE.CONFIG);
+    if (!validStr) {
+      throw new ValidationError(ERROR_MESSAGE.CONFIG.MESSAGE, ERROR_MESSAGE.CONFIG.NAME);
+    }
   }
   if (str.indexOf('-') === 0 ||
     str.indexOf('-') === (str.length - 1)
   ) {
-    throw Error(ERROR_MESSAGE.CONFIG);
+    throw new ValidationError(ERROR_MESSAGE.CONFIG.MESSAGE, ERROR_MESSAGE.CONFIG.NAME);
   }
 
   if (str.length > 2) {
     if (!str.includes('-')) {
-      throw Error(ERROR_MESSAGE.CONFIG);
+      throw new ValidationError(ERROR_MESSAGE.CONFIG.MESSAGE, ERROR_MESSAGE.CONFIG.NAME);
     }
     else {
       const arrayFromString = str.split('-');
@@ -48,7 +53,9 @@ const validateConfig = (str) => {
         }
         return result;
       }, true);
-      if (!validArray) throw Error(ERROR_MESSAGE.CONFIG);
+      if (!validArray) {
+        throw new ValidationError(ERROR_MESSAGE.CONFIG.MESSAGE, ERROR_MESSAGE.CONFIG.NAME);
+      }
     }
   }
 };
@@ -89,7 +96,7 @@ const checkRequiredAndRepetitiveItems = (arr, [abbrv, complete], isRequired) => 
  */
 const validateOptions = (arr) => {
   if (arr.length === 0) {
-    throw Error(ERROR_MESSAGE.INITIAL_ARR);
+    throw new ValidationError(ERROR_MESSAGE.INITIAL_ARR.MESSAGE, ERROR_MESSAGE.INITIAL_ARR.NAME);
   }
   const optionsConfig = ['-c', '--config'];
   const optionsInput = ['-i', '--input'];
@@ -99,7 +106,7 @@ const validateOptions = (arr) => {
   const isValidOptionOutput = checkRequiredAndRepetitiveItems(arr, optionsOutput, false);
   const isValidAllOptions = isValidOptionConfig && isValidOptionInput && isValidOptionOutput;
   if (!isValidAllOptions) {
-    throw Error(ERROR_MESSAGE.OPTIONS);
+    throw new ValidationError(ERROR_MESSAGE.OPTIONS.MESSAGE, ERROR_MESSAGE.OPTIONS.NAME);
   }
 };
 

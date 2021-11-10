@@ -1,4 +1,4 @@
-const {ALPHABET} = require('../constants');
+const { ALPHABET } = require('../constants');
 
 /**
  * Encode/decode the char using Atbash cipher

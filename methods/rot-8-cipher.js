@@ -1,4 +1,4 @@
-const {parseChar} = require('../helpers/parser');
+const { parseChar } = require('../helpers/parser');
 
 /**
  * Encode the char using Rot-8 cipher
