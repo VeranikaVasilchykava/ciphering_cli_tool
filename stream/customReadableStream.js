@@ -5,19 +5,35 @@ class CustomReadableStream extends Readable {
   constructor(input) {
     super();
     this.input = input;
-    this.count = 1;
+    this.fd = null;
   }
-  _read(number) {
-    fs.readFile(this.input, 'utf-8', (error, data) => {
-      if (error) {
-        process.stderr.write(error.message);
+  _construct(callback) {
+    fs.open(this.input, (err, fd) => {
+      if (err) {
+        process.stderr.write(err.message);
         process.exit(1);
-      }
-      while (this.count > 0) {
-        this.push(data);
-        this.count--;
+      } else {
+        this.fd = fd;
+        callback();
       }
     });
+  }
+  _read(n) {
+    const buf = Buffer.alloc(n);
+    fs.read(this.fd, buf, 0, n, null, (err, bytesRead) => {
+      if (err) {
+        this.destroy(err);
+      } else {
+        this.push(bytesRead > 0 ? buf.slice(0, bytesRead) : null);
+      }
+    });
+  }
+  _destroy(err, callback) {
+    if (this.fd) {
+      fs.close(this.fd, (er) => callback(er || err));
+    } else {
+      callback(err);
+    }
   }
 }
 
