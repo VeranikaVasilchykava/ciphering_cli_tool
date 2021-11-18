@@ -4,7 +4,8 @@
   "description": "CLI tool that will encode and decode a text by 3 substitution ciphers",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest",
+    "test:covarage": "jest --coverage"
   },
   "repository": {
     "type": "git",
@@ -21,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/VeronikaVasilchikova/ciphering_cli_tool/issues"
   },
-  "homepage": "https://github.com/VeronikaVasilchikova/ciphering_cli_tool#readme"
+  "homepage": "https://github.com/VeronikaVasilchikova/ciphering_cli_tool#readme",
+  "devDependencies": {
+    "jest": "^27.3.1"
+  }
 }
