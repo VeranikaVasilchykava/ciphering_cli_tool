@@ -7,7 +7,6 @@ const { CustomWritableStream,
         CustomReadableStream,
         customStdin } = require('./stream');
 const { ValidationError } = require('./custom-error');
-const { ERROR_MESSAGE } = require('./constants');
 
 try {
   const initialArgs = process.argv.slice(2);
@@ -24,9 +23,11 @@ try {
     readableStream,
     ...transformStreamsArray,
     writableStream,
-    (err) => {
-      if (err) {
-        throw new ValidationError(`${ERROR_MESSAGE.PIPELINE.NAME}: -> ${err.message}`);
+    (error) => {
+      if (error) {
+        const { message } = error;
+        stderr.write(`PIPELINE_ERROR: ${message}`);
+        exit(1);
       }
     }
   )
