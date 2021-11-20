@@ -2,12 +2,17 @@ const rot8CipherHandler = require('../../src/methods/rot-8-cipher');
 
 describe('ROT-8 ciphering', () => {
   test('should keep all not English characters untouched', () => {
-    expect(rot8CipherHandler('/. 20 - грейпфрут', 1)).toBe('/. 20 - грейпфрут');
-    expect(rot8CipherHandler('/. 20 - грейпфрут', 0)).toBe('/. 20 - грейпфрут');
+    const testString = 'Съешь ещё этих мягких французских булок да выпей чаю. 2021';
+    expect(rot8CipherHandler(testString, 1)).toBe(testString);
+    expect(rot8CipherHandler(testString, 0)).toBe(testString);
   });
 
   test('should code/decode correctly and consider caracter register', () => {
-    expect(rot8CipherHandler('ABCdEfGhIjKLMNOPQRSTUVWXyZ', 1)).toBe('IJKlMnOpQrSTUVWXYZABCDEFgH');
-    expect(rot8CipherHandler('iJkLmNoPQRSTUVWXYZABCDEfGH', 0)).toBe('aBcDeFgHIJKLMNOPQRSTUVWxYZ');
+    const testStrEncode = 'ABCdEfGhIjKLMNOPQRSTUVWXyZ';
+    const resultEncode = 'IJKlMnOpQrSTUVWXYZABCDEFgH';
+    const testStrDecode = 'iJkLmNoPQRSTUVWXYZABCDEfGH';
+    const resultDecode = 'aBcDeFgHIJKLMNOPQRSTUVWxYZ';
+    expect(rot8CipherHandler(testStrEncode, 1)).toBe(resultEncode);
+    expect(rot8CipherHandler(testStrDecode, 0)).toBe(resultDecode);
   });
 });

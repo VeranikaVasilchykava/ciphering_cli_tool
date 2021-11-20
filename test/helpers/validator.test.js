@@ -2,12 +2,20 @@ const { validateConfig, validateOptions } = require('../../src/helpers/validator
 
 test('Throw config error', () => {
   const testWrongConfig = 'C-R1-C0-C0-A-R0-R1-R1-A-C1';
+  const testConfigStartWithHyphen = '-C-R1-C0-C0-A-R0-R1-R1-A-C1';
+  const testConfigWithoutHyphen = 'C+R1';
   const testEmptyConfig = '';
   const testConfigWithSingleChar = 'B';
   const testConfigWithTwoChars = 'C3';
 
   function testWrongConfigFunc() {
     validateConfig(testWrongConfig);
+  }
+  function testConfigStartWithHyphenFunc() {
+    validateConfig(testConfigStartWithHyphen);
+  }
+  function testConfigWithoutHyphenFunc() {
+    validateConfig(testConfigWithoutHyphen);
   }
   function testEmptyConfigFunc() {
     validateConfig(testEmptyConfig);
@@ -20,30 +28,38 @@ test('Throw config error', () => {
   }
 
   expect(testWrongConfigFunc).toThrowError();
-  expect(testWrongConfigFunc).toThrowError(/is invalid/);
-  expect(testWrongConfigFunc).toThrowError(`The config ${testWrongConfig} is invalid`);
+  expect(testWrongConfigFunc).toThrowError(`Invalid config: should contain some of C0, C1, R0, R1, A instead of ${testWrongConfig}`);
+
+  expect(testConfigStartWithHyphenFunc).toThrowError();
+  expect(testConfigStartWithHyphenFunc).toThrowError('Invalid config: should not start or end with hyphen');
+
+  expect(testConfigWithoutHyphenFunc).toThrowError();
+  expect(testConfigWithoutHyphenFunc).toThrowError(`nvalid config: doesn't contain hyphen`);
 
   expect(testEmptyConfigFunc).toThrowError();
-  expect(testEmptyConfigFunc).toThrowError(/is empty/);
   expect(testEmptyConfigFunc).toThrowError(`The config is empty.`);
 
   expect(testConfigWithSingleCharFunc).toThrowError();
-  expect(testConfigWithSingleCharFunc).toThrowError(/is invalid/);
-  expect(testConfigWithSingleCharFunc).toThrowError(`The config ${testConfigWithSingleChar} is invalid`);
+  expect(testConfigWithSingleCharFunc).toThrowError(`Invalid config: should contain A instead of ${testConfigWithSingleChar}`);
 
   expect(testConfigWithTwoCharsFunc).toThrowError();
-  expect(testConfigWithTwoCharsFunc).toThrowError(/is invalid/);
-  expect(testConfigWithTwoCharsFunc).toThrowError(`The config ${testConfigWithTwoChars} is invalid`);
+  expect(testConfigWithTwoCharsFunc).toThrowError(`Invalid config: should contain some of C0, C1, R0, R1 instead of ${testConfigWithTwoChars}`);
 });
 
 test('Throw options error', () => {
+  const testEmptyArray = [];
   const testRepetitiveOptionsOne = ['-c', 'C1-R1-C0-C0-A-R0-R1-R1-A-C1', '-i', './input.txt', '-o', './output.txt', '--config', 'C1'];
   const testRepetitiveOptionsTwo = ['-c', 'C1-R1-C0-C0-A-R0-R1-R1-A-C1', '-i', './input.txt', '-o', './output.txt', '-c', 'C1'];
   const testRepetitiveOptionsThree = ['-c', 'C1-R1-C0-C0-A-R0-R1-R1-A-C1', '-i', './input.txt', '-o', './output.txt', '-i'];
   const testRequiredOptions = ['-i', './input.txt', '-o', './output.txt'];
   const testWrongOptionsOne = ['-b', './input.txt', '-o', './output.txt'];
   const testWrongOptionsTwo = ['--c', 'C1-R1-C0-C0-A-R0-R1-R1-A-C1', '-i', './input.txt', '-o', './output.txt'];
+  const errorMessageConfig = `Invalid options: use -c or --config, they are required but shouldn't be repeated`;
+  const errorMessageInput = `Invalid options: use -i or --input and don't repeat them`;
 
+  function testEmptyArrayFunc() {
+    validateOptions(testEmptyArray);
+  }
   function testRepetitiveOptionsOneFunc() {
     validateOptions(testRepetitiveOptionsOne);
   }
@@ -63,27 +79,24 @@ test('Throw options error', () => {
     validateOptions(testWrongOptionsTwo);
   }
 
+  expect(testEmptyArrayFunc).toThrowError();
+  expect(testEmptyArrayFunc).toThrowError(/You input empty string/);
+
   expect(testRepetitiveOptionsOneFunc).toThrowError();
-  expect(testRepetitiveOptionsOneFunc).toThrowError(/are invalid/);
-  expect(testRepetitiveOptionsOneFunc).toThrowError(`The options ${testRepetitiveOptionsOne} are invalid`);
+  expect(testRepetitiveOptionsOneFunc).toThrowError(errorMessageConfig);
 
   expect(testRepetitiveOptionsTwoFunc).toThrowError();
-  expect(testRepetitiveOptionsTwoFunc).toThrowError(/are invalid/);
-  expect(testRepetitiveOptionsTwoFunc).toThrowError(`The options ${testRepetitiveOptionsTwo} are invalid`);
+  expect(testRepetitiveOptionsTwoFunc).toThrowError(errorMessageConfig);
 
   expect(testRepetitiveOptionsThreeFunc).toThrowError();
-  expect(testRepetitiveOptionsThreeFunc).toThrowError(/are invalid/);
-  expect(testRepetitiveOptionsThreeFunc).toThrowError(`The options ${testRepetitiveOptionsThree} are invalid`);
+  expect(testRepetitiveOptionsThreeFunc).toThrowError(errorMessageInput);
 
   expect(testRequiredOptionsFunc).toThrowError();
-  expect(testRequiredOptionsFunc).toThrowError(/are invalid/);
-  expect(testRequiredOptionsFunc).toThrowError(`The options ${testRequiredOptions} are invalid`);
+  expect(testRequiredOptionsFunc).toThrowError(errorMessageConfig);
 
   expect(testWrongOptionsOneFunc).toThrowError();
-  expect(testWrongOptionsOneFunc).toThrowError(/are invalid/);
-  expect(testWrongOptionsOneFunc).toThrowError(`The options ${testWrongOptionsOne} are invalid`);
+  expect(testWrongOptionsOneFunc).toThrowError(errorMessageConfig);
 
   expect(testWrongOptionsTwoFunc).toThrowError();
-  expect(testWrongOptionsTwoFunc).toThrowError(/are invalid/);
-  expect(testWrongOptionsTwoFunc).toThrowError(`The options ${testWrongOptionsTwo} are invalid`);
-})
+  expect(testWrongOptionsTwoFunc).toThrowError(errorMessageConfig);
+});
