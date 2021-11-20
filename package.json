@@ -25,5 +25,13 @@
   "homepage": "https://github.com/VeronikaVasilchikova/ciphering_cli_tool#readme",
   "devDependencies": {
     "jest": "^27.3.1"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "!**/coverage/**",
+      "!**/node_modules/**",
+      "!**/index.js",
+      "!**/vendor/**"
+    ]
   }
 }

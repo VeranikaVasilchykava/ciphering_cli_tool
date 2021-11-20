@@ -110,13 +110,13 @@ const validateOptions = (arr) => {
   const isValidOptionOutput = checkRequiredAndRepetitiveItems(arr, optionsOutput, false);
 
   if (!isValidOptionConfig) {
-    throw new InvalidOptionsError(`use -c or --config, they are required but shouldn't be repeated`);
+    throw new InvalidOptionsError(ERROR_MESSAGE.OPTIONS.CONFIG);
   }
   if (!isValidOptionInput) {
-    throw new InvalidOptionsError(`use -i or --input and don't repeat them`);
+    throw new InvalidOptionsError(ERROR_MESSAGE.OPTIONS.INPUT);
   }
   if (!isValidOptionOutput) {
-    throw new InvalidOptionsError(`use -o or --output and don't repeat them`);
+    throw new InvalidOptionsError(ERROR_MESSAGE.OPTIONS.OUTPUT);
   }
 };
 

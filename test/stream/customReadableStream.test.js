@@ -1,4 +1,5 @@
 const fs = require('fs');
+const { PassThrough } = require('stream')
 const CustomReadableStream = require('../../src/stream/customReadableStream');
 
 describe('CustomReadableStream', () => {
@@ -15,6 +16,7 @@ describe('CustomReadableStream', () => {
   test('method _read should be defined', () => {
     expect(new CustomReadableStream(mockFilePath)._read).toBeDefined();
   });
+
   // test('rejects/errors if a stream error occurs', () => {
   //   expect(testWrongInputPath).toThrowError();
   // })
