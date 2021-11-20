@@ -27,11 +27,20 @@
     "jest": "^27.3.1"
   },
   "jest": {
+    "collectCoverage": true,
     "collectCoverageFrom": [
-      "!**/coverage/**",
+      "**/*.js",
       "!**/node_modules/**",
-      "!**/index.js",
-      "!**/vendor/**"
-    ]
+      "!**/vendor/**",
+      "!**/coverage/**",
+      "!**/src/stream/**",
+      "!**/src/my_ciphering_cli**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 85,
+        "lines": 70
+      }
+    }
   }
 }
