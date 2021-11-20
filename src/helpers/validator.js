@@ -116,5 +116,6 @@ const validateOptions = (arr) => {
 
 module.exports = {
   validateConfig,
-  validateOptions
+  validateOptions,
+  checkRequiredAndRepetitiveItems
 };
