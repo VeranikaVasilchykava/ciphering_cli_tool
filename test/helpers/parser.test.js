@@ -1,7 +1,7 @@
 const { parseChar, argsParser } = require('../../src/helpers/parser');
 
-describe('Test parser:', () => {
-  test('chars should be parsed depending on register to object', () => {
+describe('Char parser', () => {
+  test('should parse chars depending on register to object', () => {
     expect(parseChar('G')).toStrictEqual({
       charCode: 71,
       aCode: 65,
@@ -13,23 +13,25 @@ describe('Test parser:', () => {
       zCode: 122
     });
   });
+});
 
-  test('arguments should be parsed to object', () => {
-    const testArgs = ['-c', 'C1-C1-R0-A', '-i', './input.txt', '-o', './output.txt'];
-    const testFullArgs = ['--config', 'C1-C1-R0-A', '--input', './input.txt', '--output', './output.txt'];
-    expect(argsParser(testArgs)).toStrictEqual({
+describe('Arguments parser', () => {
+  test('should parse arguments to object', () => {
+    const testShortNameArgs = ['-c', 'C1-C1-R0-A', '-i', './input.txt', '-o', './output.txt'];
+    const testFullNameArgs = ['--config', 'C1-C1-R0-A', '--input', './input.txt', '--output', './output.txt'];
+    expect(argsParser(testShortNameArgs)).toStrictEqual({
       config: 'C1-C1-R0-A',
       input: './input.txt',
       output: './output.txt'
     });
-    expect(argsParser(testFullArgs)).toStrictEqual({
+    expect(argsParser(testFullNameArgs)).toStrictEqual({
       config: 'C1-C1-R0-A',
       input: './input.txt',
       output: './output.txt'
     });
   });
 
-  test('throw error', () => {
+  test('should throw error in case of getting empty arguments array', () => {
     const testEmptyArgumentsArray = [];
 
     function testEmptyArgumentsArrayFunc() {
@@ -38,6 +40,5 @@ describe('Test parser:', () => {
 
     expect(testEmptyArgumentsArrayFunc).toThrowError();
     expect(testEmptyArgumentsArrayFunc).toThrowError('You input empty string');
-
   });
 });
