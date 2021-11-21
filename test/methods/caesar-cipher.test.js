@@ -7,12 +7,15 @@ describe('Caesar ciphering', () => {
     expect(caesarCipherHandler(testString, 0)).toBe(testString);
   });
 
-  test('should code/decode correctly and consider caracter register', () => {
+  test('should endecode correctly and consider caracter register', () => {
     const testStrEncode = 'aBCdEFGHIJKLMNOPQRSTUVWxYz';
     const resultEncode = 'bCDeFGHIJKLMNOPQRSTUVWXyZa';
+    expect(caesarCipherHandler(testStrEncode, 1)).toBe(resultEncode);
+  });
+
+  test('should decode correctly and consider caracter register', () => {
     const testStrDecode = 'BcDeFgHIJKLMNOPQRSTUVWxYZA';
     const resultDecode = 'AbCdEfGHIJKLMNOPQRSTUVwXYZ';
-    expect(caesarCipherHandler(testStrEncode, 1)).toBe(resultEncode);
     expect(caesarCipherHandler(testStrDecode, 0)).toBe(resultDecode);
   });
 });

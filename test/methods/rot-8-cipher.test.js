@@ -7,12 +7,15 @@ describe('ROT-8 ciphering', () => {
     expect(rot8CipherHandler(testString, 0)).toBe(testString);
   });
 
-  test('should code/decode correctly and consider caracter register', () => {
+  test('should endecode correctly and consider caracter register', () => {
     const testStrEncode = 'ABCdEfGhIjKLMNOPQRSTUVWXyZ';
     const resultEncode = 'IJKlMnOpQrSTUVWXYZABCDEFgH';
+    expect(rot8CipherHandler(testStrEncode, 1)).toBe(resultEncode);
+  });
+
+  test('should decode correctly and consider caracter register', () => {
     const testStrDecode = 'iJkLmNoPQRSTUVWXYZABCDEfGH';
     const resultDecode = 'aBcDeFgHIJKLMNOPQRSTUVWxYZ';
-    expect(rot8CipherHandler(testStrEncode, 1)).toBe(resultEncode);
     expect(rot8CipherHandler(testStrDecode, 0)).toBe(resultDecode);
   });
 });
