@@ -1,10 +1,102 @@
-const { pipeline } = require('stream');
-const fs = require('fs');
-const convertStringToStreamsArray = require('../../src/helpers/converter');
 const { validateConfig, validateOptions } = require('../../src/helpers/validator');
-const { CustomWritableStream, CustomReadableStream } = require('../../src/stream');
+const { ValidationError } = require('../../src/custom-error');
 
 describe('Config validator', () => {
+  let mockStdErr;
+  let mockExit;
+
+  beforeEach(() => {
+    mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+    mockStdErr = jest.spyOn(process.stderr, 'write').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  /**
+   * Check error message in terminal
+   */
+  test(`should show error in terminal if user doesn't pass arguments for --config`, () => {
+    try {
+      validateConfig();
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith('EMPTY CONFIG -> The config is empty. Please check usage examples in read.me and try again.');
+  });
+
+  test('should show error in terminal if user passes incorrent symbols in argument for --config', () => {
+    const testWrongConfig = 'C-R1-C0-C0-A-R0-R1-R1-A-C1';
+
+    try {
+      validateConfig(testWrongConfig);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith(`Invalid config: should contain some of C0, C1, R0, R1, A instead of ${testWrongConfig}`);
+  });
+
+  test('should show error in terminal if user passes incorrent symbols in argument for --config with single char', () => {
+    const testConfigWithSingleChar = 'B';
+
+    try {
+      validateConfig(testConfigWithSingleChar);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith(`Invalid config: should contain A instead of ${testConfigWithSingleChar}`);
+  });
+
+  test('should show error in terminal if user passes incorrent delimiters between chars in --config', () => {
+    const testConfigWithoutHyphen = 'C+R1';
+    try {
+      validateConfig(testConfigWithoutHyphen);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith(`Invalid config: doesn't contain hyphen`);
+  });
+
+  /**
+   * Check thrown errors
+   */
   test('should return error if user passes incorrent symbols in argument for --config', () => {
     const testWrongConfig = 'C-R1-C0-C0-A-R0-R1-R1-A-C1';
     const testExeededConfig = 'C12-R1-C0';
@@ -64,7 +156,99 @@ describe('Config validator', () => {
 describe('Options validator', () => {
   const errorMessageConfig = `Invalid options: use -c or --config, they are required but shouldn't be repeated`;
   const errorMessageInput = `Invalid options: use -i or --input and don't repeat them`;
+  let mockStdErr;
+  let mockExit;
 
+  beforeEach(() => {
+    mockExit = jest.spyOn(process, 'exit').mockImplementation(() => {});
+    mockStdErr = jest.spyOn(process.stderr, 'write').mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  /**
+   * Check error message in terminal
+   */
+  test(`should show error in terminal if user doesn't pass options`, () => {
+    const testEmptyArray = [];
+
+    try {
+      validateOptions(testEmptyArray);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith('EMPTY DATA: -> You input empty string. Please check usage examples in read.me and try again.');
+  });
+  test(`should show error in terminal if user doesn't pass required options -c, --config`, () => {
+    const testRequiredOptions = ['-i', './input.txt', '-o', './output.txt'];
+    try {
+      validateOptions(testRequiredOptions);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith(errorMessageConfig);
+  });
+  test('should show error in terminal if user passes the same option twice', () => {
+    const testRepetitiveOptions = ['-c', 'C1-R1-C0-C0-A-R0-R1-R1-A-C1', '-i', './input.txt', '-o', './output.txt', '--config', 'C1'];
+    try {
+      validateOptions(testRepetitiveOptions);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith(errorMessageConfig);
+  });
+  test('should show error in terminal if user passes wrong options', () => {
+    const testWrongOptions = ['-b', './input.txt', '-o', './output.txt'];
+
+    try {
+      validateOptions(testWrongOptions);
+    }
+    catch(error) {
+      if (error instanceof ValidationError) {
+        const { message } = error;
+        process.stderr.write(message);
+        process.exit(1);
+      }
+      else {
+        throw error;
+      }
+    }
+    expect(mockExit).toHaveBeenCalledWith(1);
+    expect(mockStdErr).toHaveBeenCalledWith(errorMessageConfig);
+  });
+
+  /**
+   * Check thrown errors
+   */
   test(`should return error if user doesn't pass options`, () => {
     const testEmptyArray = [];
     function testEmptyArrayFunc() {
@@ -119,122 +303,5 @@ describe('Options validator', () => {
     }
     expect(testWrongOptionsTwoFunc).toThrowError();
     expect(testWrongOptionsTwoFunc).toThrowError(errorMessageConfig);
-  });
-});
-
-
-describe('Ciphering CLI Tool', () => {
-  const configStringOne = 'C1-C1-R0-A';
-  const configStringTwo = 'C1-C0-A-R1-R0-A-R0-R0-C1-A';
-  const configStringThree = 'A-A-A-R1-R0-R0-R0-C1-C1-A';
-  const configStringFour = 'C1-R1-C0-C0-A-R0-R1-R1-A-C1';
-  const inputString = 'This is secret. Message about "_" symbol!';
-  const resultOne = 'Myxn xn nbdobm. Tbnnfzb ferlm "_" nhteru!\n';
-  const resultTwo = 'Vhgw gw wkmxkv. Ckwwoik onauv "_" wqcnad!\n';
-  const resultThree = 'Hvwg wg gsqfsh. Asggous opcih "_" gmapcz!\n';
-  const resultFour = 'This is secret. Message about "_" symbol!\n';
-  const mockInputFilePath = './test-input.txt';
-  const mockOutputFilePath = './test-output.txt';
-
-  beforeEach(() => {
-    fs.appendFileSync(mockInputFilePath, inputString, (err) => {});
-    fs.appendFileSync(mockOutputFilePath, '', (err) => {});
-  });
-
-  afterEach(() => {
-    if (fs.existsSync(mockInputFilePath)) {
-      fs.writeFileSync(mockInputFilePath, '', () => {});
-    }
-    if (fs.existsSync(mockOutputFilePath)) {
-      fs.writeFileSync(mockOutputFilePath, '', () => {});
-    }
-  });
-
-  test('should return "Myxn xn nbdobm. Tbnnfzb ferlm "_" nhteru!" in case of getting "This is secret. Message about "_" symbol!"', () => {
-    const readableStream = new CustomReadableStream(mockInputFilePath);
-    const writableStream = new CustomWritableStream(mockOutputFilePath);
-    const transformStreamsArray = convertStringToStreamsArray(configStringOne);
-    const resultReadableStream = fs.createReadStream(mockOutputFilePath, 'utf8');
-
-    pipeline(
-      readableStream,
-      ...transformStreamsArray,
-      writableStream,
-      (error) => {
-        if (error) {
-          process.stderr.write(error);
-          process.exit(1);
-        }
-      }
-    )
-    resultReadableStream.on('data', (chunk) => {
-      expect(chunk.toString()).toBe(resultOne);
-    });
-  });
-
-  test('should return "Vhgw gw wkmxkv. Ckwwoik onauv "_" wqcnad!" in case of getting "This is secret. Message about "_" symbol!"', () => {
-    const readableStream = new CustomReadableStream(mockInputFilePath);
-    const writableStream = new CustomWritableStream(mockOutputFilePath);
-    const transformStreamsArray = convertStringToStreamsArray(configStringTwo);
-    const resultReadableStream = fs.createReadStream(mockOutputFilePath, 'utf8');
-
-    pipeline(
-      readableStream,
-      ...transformStreamsArray,
-      writableStream,
-      (error) => {
-        if (error) {
-          process.stderr.write(error);
-          process.exit(1);
-        }
-      }
-    )
-    resultReadableStream.on('data', (chunk) => {
-      expect(chunk.toString()).toBe(resultTwo);
-    });
-  });
-
-  test('should return "Hvwg wg gsqfsh. Asggous opcih "_" gmapcz!" in case of getting "This is secret. Message about "_" symbol!"', () => {
-    const readableStream = new CustomReadableStream(mockInputFilePath);
-    const writableStream = new CustomWritableStream(mockOutputFilePath);
-    const transformStreamsArray = convertStringToStreamsArray(configStringThree);
-    const resultReadableStream = fs.createReadStream(mockOutputFilePath, 'utf8');
-
-    pipeline(
-      readableStream,
-      ...transformStreamsArray,
-      writableStream,
-      (error) => {
-        if (error) {
-          process.stderr.write(error);
-          process.exit(1);
-        }
-      }
-    )
-    resultReadableStream.on('data', (chunk) => {
-      expect(chunk.toString()).toBe(resultThree);
-    });
-  });
-
-  test('should return "This is secret. Message about "_" symbol!" in case of getting "This is secret. Message about "_" symbol!"', () => {
-    const readableStream = new CustomReadableStream(mockInputFilePath);
-    const writableStream = new CustomWritableStream(mockOutputFilePath);
-    const transformStreamsArray = convertStringToStreamsArray(configStringFour);
-    const resultReadableStream = fs.createReadStream(mockOutputFilePath, 'utf8');
-
-    pipeline(
-      readableStream,
-      ...transformStreamsArray,
-      writableStream,
-      (error) => {
-        if (error) {
-          process.stderr.write(error);
-          process.exit(1);
-        }
-      }
-    )
-    resultReadableStream.on('data', (chunk) => {
-      expect(chunk.toString()).toBe(resultFour);
-    });
   });
 });
