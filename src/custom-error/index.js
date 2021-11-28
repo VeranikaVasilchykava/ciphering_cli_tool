@@ -7,7 +7,7 @@ class ValidationError extends Error {
 
 class InvalidConfigError extends ValidationError {
   constructor(config) {
-    super(`The config ${config} is invalid`);
+    super(`Invalid config: ${config}`);
     this.name = "InvalidConfigError";
     this.config = config;
   }
@@ -15,7 +15,7 @@ class InvalidConfigError extends ValidationError {
 
 class InvalidOptionsError extends ValidationError {
   constructor(option) {
-    super(`The options ${option} are invalid`);
+    super(`Invalid options: ${option}`);
     this.name = "InvalidOptionsError";
     this.option = option;
   }

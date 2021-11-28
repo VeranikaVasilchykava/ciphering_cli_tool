@@ -17,7 +17,7 @@ const validateConfig = (str) => {
     throw new ValidationError(`${ERROR_MESSAGE.EMPTY_CONFIG.NAME} -> ${ERROR_MESSAGE.EMPTY_CONFIG.MESSAGE}`);
   }
   if (str.length === 1 && str !== 'A') {
-    throw new InvalidConfigError(str);
+    throw new InvalidConfigError(`should contain A instead of ${str}`);
   }
   if (str.length === 2) {
     const validStr = (str === 'C0' ||
@@ -25,18 +25,18 @@ const validateConfig = (str) => {
       str === 'R0' ||
       str === 'R1');
     if (!validStr) {
-      throw new InvalidConfigError(str);
+      throw new InvalidConfigError(`should contain some of C0, C1, R0, R1 instead of ${str}`);
     }
   }
   if (str.indexOf('-') === 0 ||
     str.indexOf('-') === (str.length - 1)
   ) {
-    throw new InvalidConfigError(str);
+    throw new InvalidConfigError('should not start or end with hyphen');
   }
 
   if (str.length > 2) {
     if (!str.includes('-')) {
-      throw new InvalidConfigError(str);
+      throw new InvalidConfigError(`doesn't contain hyphen`);
     }
     else {
       const arrayFromString = str.split('-');
@@ -58,7 +58,7 @@ const validateConfig = (str) => {
         return result;
       }, true);
       if (!validArray) {
-        throw new InvalidConfigError(str);
+        throw new InvalidConfigError(`should contain some of C0, C1, R0, R1, A instead of ${str}`);
       }
     }
   }
@@ -108,13 +108,20 @@ const validateOptions = (arr) => {
   const isValidOptionConfig = checkRequiredAndRepetitiveItems(arr, optionsConfig, true);
   const isValidOptionInput = checkRequiredAndRepetitiveItems(arr, optionsInput, false);
   const isValidOptionOutput = checkRequiredAndRepetitiveItems(arr, optionsOutput, false);
-  const isValidAllOptions = isValidOptionConfig && isValidOptionInput && isValidOptionOutput;
-  if (!isValidAllOptions) {
-    throw new InvalidOptionsError(arr);
+
+  if (!isValidOptionConfig) {
+    throw new InvalidOptionsError(ERROR_MESSAGE.OPTIONS.CONFIG);
+  }
+  if (!isValidOptionInput) {
+    throw new InvalidOptionsError(ERROR_MESSAGE.OPTIONS.INPUT);
+  }
+  if (!isValidOptionOutput) {
+    throw new InvalidOptionsError(ERROR_MESSAGE.OPTIONS.OUTPUT);
   }
 };
 
 module.exports = {
   validateConfig,
-  validateOptions
+  validateOptions,
+  checkRequiredAndRepetitiveItems
 };

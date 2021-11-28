@@ -10,7 +10,7 @@ class CustomReadableStream extends Readable {
   _construct(callback) {
     fs.open(this.input, (err, fd) => {
       if (err) {
-        process.stderr.write(err.message);
+        process.stderr.write(`INPUT_ERROR: ${err.message}`);
         process.exit(1);
       } else {
         this.fd = fd;

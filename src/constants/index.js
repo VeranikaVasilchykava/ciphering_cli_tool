@@ -18,6 +18,11 @@ const ERROR_MESSAGE = {
   },
   PIPELINE: {
     NAME: 'PIPELINE ERROR'
+  },
+  OPTIONS: {
+    CONFIG: `use -c or --config, they are required but shouldn't be repeated`,
+    INPUT: `use -i or --input and don't repeat them`,
+    OUTPUT: `use -o or --output and don't repeat them`
   }
 };
 
